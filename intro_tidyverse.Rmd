@@ -47,11 +47,11 @@ An alternative to Rs in-built `apply()` functions. Allows to run same function o
 
 ## ggplot2
 
-A package used make beautiful graphs.
+A package used to make beautiful graphs.
 
 #Set up
 
-Before we begin lets set working directory to the directory with course materials. To check current working directory you can use 'getwd()' command. 
+Before we begin lets set working directory to the directory with course materials. To check current working directory you can use `getwd()` command. 
 
 ```{r, eval=FALSE}
 getwd()
@@ -91,7 +91,7 @@ census.data
 census_data
 ```
 
-We will put both tables in a list so we can easily apply same functions to both tables with 'lapply()' for comparision.
+We will put both tables in a list so we can easily apply same functions to both tables with `lapply()` for comparision.
 
 ```{r, eval=TRUE}
 data_list <- list(BasicR = census.data, TidyR = census_data)
