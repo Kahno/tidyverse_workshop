@@ -1,0 +1,510 @@
+---
+title: "Introduction to tidyverse"
+date: "January 2020"
+author: "Matej Piculin"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    toc: yes
+    highlight: github
+---
+
+
+# Tidyverse
+
+Tidyverse (https://www.tidyverse.org/) is a collection of packages for R language (https://www.r-project.org/). It is composed of core tidyverse packages:
+
+
+* Tidyverse:     
+    + readr
+    + tibble
+    + tidyr
+    + dplyr
+    + purrr
+    + ggplot2
+
+There are many more packages in tidyverse such as lubridate, stringr, forcats, etc... In this workshop we will do a short overview of five core packages. The core packages include:
+
+## tibble
+
+An alternative for data.frame called **tibble** or **tbl_df**. Tibble has mainly improve prints and always returns a tibble if we subset it.
+
+## readr
+
+Package readr is a package for reading data from .csv files with improved defaults over `read.csv()` function from **utils** package. 
+
+## tidyr
+
+Package for tidiyng data. This means that we want to have a data set where each table has one kind of observations. Each column in each table represents an attribute and each row an observation. Also includes functions to transform data from long to wide format and vice versa.
+
+## dplyr
+
+Main package for transforming data to the desired structured. Tidiying and transforming data is also called wrangling and is done at the same time.
+
+## purrr
+
+An alternative to Rs in-built `apply()` functions. Allows to run same function over list or vectors.
+
+## ggplot2
+
+A package used make beautiful graphs.
+
+#Set up
+
+Before we begin lets set working directory to the directory with course materials. To check current working directory you can use 'getwd()' command. 
+
+```{r, eval=FALSE}
+getwd()
+```
+
+The following command 'setwd()' will change your working directory to 'C:/Workshop/Tidyverse':
+
+```{r, eval=FALSE}
+setwd("C:/Workshop/Tidyverse")
+```
+
+Next install and load all the packages in tidyverse with next two lines.
+
+```{r, eval = FALSE}
+install.packages("tidyverse")
+library(tidyverse)
+```
+
+
+#Reading data sets from files
+
+We will focus on reading .csv files and compare the process to the in-build functions. Package **readr** also allows to read excel spreadsheets, SPSS data, xml files, etc...
+
+## readr vs utils
+
+Both packages are used to read data from a .csv file. Lets load census.csv dataset with both packages. Tidyverse tries to remove the use of '.' from variable and function names, so you can recognize tidyverse functions because they use underscore ('_') instead of dot ('.') in names.
+
+```{r, eval=TRUE}
+census.data <- read.csv("./data/census.csv") #utils function
+census_data <- read_csv("./data/census.csv") #readr function
+```
+
+Lets take a look at both tables:
+
+```{r, eval=TRUE}
+census.data
+census_data
+```
+
+We will put both tables in a list so we can easily apply same functions to both tables with 'lapply()' for comparision.
+
+```{r, eval=TRUE}
+data_list <- list(BasicR = census.data, TidyR = census_data)
+```
+
+Both functions successfully loaded the file with default parameters but there are few differences. Lets check the class of both variables.
+
+```{r, eval=TRUE}
+lapply(data_list, class)
+```
+
+
+
+Function read.csv returns a `data.frame` which is a basic data structure for data analysis in R. Function `read_csv()` on the other hand returns multiclass object that extends `data.frame`, more commonly known as **tibble** or **tbl_df**.
+
+When using tibble, the `print()` function tries to fit output on screen to make the information more condense and readable. Printing data.frame tries to simply write everything on screen. You can use `head()` function to make results more comparable.
+
+```{r, eval=TRUE}
+lapply(data_list, head)
+```
+
+Tibble also shows some extra information as the size of the table and class of columns. Looking at the class of `census.data` we can see that the classes of attribtes differ. We would need to use parameter `stringsAsFactors = FALSE` while using `read.csv()` to avoid conversion to factors at read time.
+
+```{r, eval=TRUE, echo=TRUE}
+lapply(data_list, function(x) {sapply(x, class)})
+```
+
+Note that the utils `read.csv()` function also changed the name of 'education-num' attribute to 'education.num'. This means that you can't just replace `read.csv()` with `read_csv()` because it will lead to errors later in the script.
+
+OK, these are the differenes while reading the file. Lets write the data back...
+
+```{r, eval=TRUE}
+write.csv(census.data, file = "./data/censusR.csv") #Basic R
+write_csv(census.data, path = "./data/censusTidy.csv") #Tidyverse
+```
+
+...and read it again.
+  
+```{r, eval=TRUE}
+census2.data <- read.csv("./data/censusR.csv") #Basic R
+census2_data <- read_csv("./data/censusTidy.csv") #Tidyverse
+data_list2 <- list(BasicR = census2.data, TidyR = census2_data)
+lapply(data_list2, head)
+```
+
+You can see that the basic R has quite nonintuitive defaults since by writing and loading a table we constructed a new column 'X' with unique id. The basic R file is also bigger, around 4.5MB, while tidyverse version is only 3.7MB. 
+
+The unavailable data is marked with "?" in this dataset. Lets try to read the files so that those values will be replaced with R value NA (Not Available).
+
+```{r, eval=TRUE}
+census.data <- read.csv("./data/census.csv", na.strings = "?") #Basic R
+census_data <- read_csv("./data/census.csv", na = "?") #Tidyverse (We can provide a vector of NA values)
+data_list <- list(BasicR = census.data, TidyR = census_data)
+lapply(data_list, function(x) {x[62,]}) #return 62 row since it has NA values
+```
+
+Table read using `read.csv()` still has "?" value. The reason is that `read.csv()` didn't remove leading spaces. We should use `na.strings = " ?"`.
+
+## tibble vs data.frame
+
+Using tibble package we can transfrom data.frame to a tibble using `as_tibble()` function.
+
+```{r, eval=TRUE}
+as_tibble(census.data)
+```
+
+Note that the types and names of attributes are now different as we would got them while reading directly from file since `read.csv()` function changed their names. In html markdown it is also visible that the `read.csv()` added an extra space to all factors.
+
+```{r, eval=TRUE}
+unique(as.character(census.data$workclass))
+```
+
+
+We saw that tibble always condenses output. We can print custom number of rows using print.
+
+```{r, eval=TRUE}
+print(census_data, n = 15)
+```
+
+Or print all columns as data.frame does by default:
+
+```{r, eval=TRUE}
+print(census_data, width = Inf)
+```
+
+You can also use 'glimpse()' or 'View()' if you need to see more data. Both work on tibbles and data.frames.
+
+```{r, eval=TRUE}
+glimpse(census_data)
+```
+
+Tibbles are more consistent. If we select columns using [] we always get a tibble back. Using [[]] or $ always returns a vector. With data.frame the return type depends on how many columns we selected.
+
+```{r, eval=TRUE}
+class(census.data)
+class(census.data[,1:5])
+class(census.data[,5])
+
+class(census_data)
+class(census_data[,1:5])
+class(census_data[,5])
+```
+
+```{r, eval=TRUE}
+lapply(data_list, function(x){x[,5]})
+```
+
+R always tries to simplify the answer so it returns a vector instead of data.frame if we only return one column. Tidyverse returns a table of size $n \times 1$. This is useful to make pipelining easier (%>%). We will use pipe operator later.
+
+#tidyr - tidy up data
+
+Once we read data we usually need to tidy it so it is in the right format for further work. What format we use depends on what we need to do: statistics, machine learning, visualization, etc...
+
+For this part we will be working with movies dataset.
+
+```{r, eval=TRUE}
+movies <- read_csv("./data/movies.csv")
+movies
+```
+
+
+This dataset has 27 attributes, from director name, top 3 leading author names, their facebook likes, gross income, genre etc...
+
+Before we start using **tidyr** we will skip ahead and use two very usefull function from **dplyr** package namely `select()` and `filter()`. These two functions are used for selecting desired columns and rows. Tidying (tidyr) and transforming (dplyr) data is called wrangling and is usually done together this is why we will already use few functions from **dplyr** here.
+
+First lets just select a small subset of atttributes from movies dataset. This can be done with `select()'.
+
+```{r, eval=TRUE}
+movies_small <- select(movies, movie_title, director_name, actor_1_name, actor_2_name, actor_3_name, genres)
+movies_small
+```
+
+Next lets try to select movies (rows) which were directed by Frank Coraci. We can use `filter()` for this.
+
+```{r, eval=TRUE}
+filter(movies_small, director_name == "Frank Coraci")
+```
+
+`filter()` selects rows that satisfy the given condition. Here we can see that some rows repeat which we do not want since this is the same observation. We can remove it with `distinct()` (dplyr). Later we will have another look at `filter()` options.
+
+```{r, eval=TRUE}
+movies_small <- distinct(movies_small)
+movies_small
+```
+
+## pipe operator 
+
+We could do the same as above without saving intermidiate result using pipeline or nested functions. The pipe operator %>% takes the result of a function and passes it as a first argument to the next function. This means writing x %>% f(y) is the same as f(x,y) or extended x %>% f(y) %>% g(z) is the same as g(f(x, y),z) and so on.
+
+```{r, eval=TRUE}
+movies %>% select(movie_title, director_name, actor_1_name, actor_2_name, actor_3_name, genres) %>% filter(director_name == "Frank Coraci") %>% distinct()
+```
+
+
+## Reshaping and splitting
+
+From here on we will use movies_small table to show how to tidy up this dataset.
+
+If we wish to filter by actor name the provided table is a bit tricky since we need to search in three different columns. Lets `gather()` this information in a single column.
+
+```{r, eval=TRUE}
+movies_small <- gather(movies_small, 'actor_1_name', 'actor_2_name', 'actor_3_name', key = "Actor_number", value = "Actor_name")
+movies_small
+```
+
+Now lets look at the values for the movie Avatar and Spectre. 
+
+```{r, eval=TRUE}
+filter(movies_small, movie_title == "Avatar" | movie_title == "Spectre")
+```
+
+Or we can see all the movies Tom Hanks played one of the leading roles.
+
+```{r, eval=TRUE}
+filter(movies_small, Actor_name == "Tom Hanks")
+```
+
+The above step is called transforming a table from wide format to long format.
+
+A good pratice is that each cell only has one value. Attribute generes should be split into multiple lines since it has multiple values separated by '|'. We can use `separate_rows()` for this.
+
+```{r, eval=TRUE}
+separate_rows(movies_small, genres, sep = "[|]")
+```
+
+We could also split this attribute to multiple attributes using `separate()`. In this case this is not advisable since we now have the same problem as we had with actor names but it is included here just for demonstration.
+
+```{r, eval=TRUE}
+separate(movies_small, genres, sep = "[|]", into = c(paste("genre", 1:5, sep = "_")))
+```
+
+The inverse of a wide to long format transformation that we used before is long to wide transformation for whcih we can use `spread()` function. We will create a dummy table since we do not have anything appropriate in movies dataset.
+
+
+```{r, eval=TRUE}
+movies_long <- tibble(movie_title = rep(movies$movie_title, times = 2), 
+       key = rep(c("duration", "year"), 
+       each = nrow(movies)),
+       value = c(movies$duration, movies$title_year)) %>%
+  arrange(movie_title) %>% distinct(movie_title, key, .keep_all = TRUE)
+movies_long
+```
+
+Here we used `tibble()` function to construct a table from vectors and then applied `arrange()` (dplyr) to sorts the observations by given attribute name. This simple data set has each movie listed twice once with its duration and once with its year of release. Since two rows describe same movie we want to put all values in the same row. We had to remove duplicates since spread does not work if all the values are not unique. 
+
+```{r, eval=TRUE}
+spread(movies_long, key = key, value = value)
+```
+
+`spread()` helps us get the data from multiple rows to one row. 
+
+Similary as we did above, the inverse of `separate()` function is `unite()` which just concatenates values of different columns. We can put all actor names in same column using `unite()`.
+
+```{r, eval=TRUE}
+unite(movies, actor_1_name, actor_2_name, actor_3_name, col = "Actor_names", sep = " | ") %>% select(movie_title, director_name, Actor_names)
+```
+
+If you need permutation of all the values of few attributes you can use `expand()`.
+
+```{r, eval=TRUE}
+expand(tibble(num = c(1,2,3), char = c("a", "b", "c"), num2 = c(2,3,4)), num, char)
+```
+
+## Missing values
+
+What to do with missing values? Some algorithms can't handle them so we need to remove them or replace them with reasonable values.
+
+The easiest way is to just drop all observations which include a missing value.
+
+```{r, eval=TRUE}
+drop_na(movies)
+```
+
+We lost information for around 1300 movies this way. `drop_na()` removes any observation that has a missing values anywhere in the table. We can only remove observations that are missing specific value. 
+
+```{r, eval=TRUE}
+drop_na(movies, country)
+```
+
+We only removed 5 movies which have a missing country field.
+
+Sometimes if the data is in some way ordered we can replace the values with the value above or below it.
+
+
+```{r, eval=TRUE}
+movies
+fill(movies, duration, .direction = "down")
+```
+
+Usually most useful solution is by using `replace_na()` function which allows us to replace missing values with choosen value.
+
+
+```{r, eval=TRUE}
+replace_na(movies, list(duration = round(mean(movies$duration, na.rm = TRUE)), num_critic_for_reviews = 0))
+```
+
+Here we replaced the missing durations of movies with average length and number of critics reviews with 0.
+
+#dplyr - transforming data
+
+We will now go to the last part which is transforming data. We will again use census data.
+
+```{r}
+census_data <- read_csv("./data/census.csv", na = "?", col_types = cols(age = col_integer(), education = col_factor(), 'education-num' = col_integer()))
+census_data
+```
+
+If we wish we can provide column parsing at reading time as we did above.
+
+We can change the class later using  `parse()` family of functions.
+
+```{r}
+census_data$sex <- parse_factor(census_data$sex)
+census_data
+```
+
+## Filter
+
+The `filter()` function allows us to select rows, based on values of the variables as we already explored before. As input it gets a tibble and the conditions or row selection and it outputs a new tibble that consists only of desired rows.
+
+```{r warning=FALSE}
+filter(census_data, workclass == "Private") #Selects all rows with value Private
+filter(census_data, workclass == "Private", age >= 50) #The selected rows must satisfy both conditions
+filter(census_data, census_data$'education-num' == 7) #With attribute names in quotes we need to provide table name
+```
+
+We can use logical or in conditions
+
+```{r}
+filter(census_data, relationship == "Husband" | relationship == "Wife")
+```
+
+With multiple values its easier to use %in% operator.
+
+```{r}
+filter(census_data, education %in% c("1st-4th", "5th-6th", "7th-8th", "9th", "10th", "11th"))
+```
+
+
+## Select
+
+We have already saw `select()` function too but lets examine it further. First we can select desired columns by name.
+
+```{r}
+select(census_data, workclass, education, occupation, income)
+```
+
+We can aslo select range of columns between names or remove them with using -.
+
+```{r}
+select(census_data, workclass:sex)
+select(census_data, -('capital-gain':'capital-loss'), -'education-num')
+```
+
+We can also use special functions provided just for select for partial name searching.
+
+```{r}
+select(census_data, starts_with("r"))
+select(census_data, last_col()) 
+select(census_data, contains("-"))
+```
+
+We can rename columns using `rename()`. Lets get rid of '-'.
+
+```{r}
+census_data <- rename(census_data, education_num = 'education-num', marital_status = 'marital-status', capital_gain = 'capital-gain', capital_loss = 'capital-loss', 
+       hours_per_week = 'hours-per-week', native_country = 'native-country')
+```
+
+## Mutate
+
+If we want to create new variables that are calculated from existing variables we can use `mutate()`.
+
+```{r}
+mutate(census_data, capital_difference = capital_gain - capital_loss) %>% select(capital_gain, capital_loss, capital_difference)
+```
+
+We can also keep only newly constructed columns using `transmute()`. A very useful function to tidy up values is also `case_when()`.
+
+```{r}
+new_columns <- transmute(census_data, capital_difference = capital_gain - capital_loss, relationship = case_when(relationship == 'Husband' ~ 'Married', relationship == 'Wife' ~ 'Married', TRUE ~ relationship))
+new_columns
+```
+
+And add them later using `add_column()`. 
+
+```{r}
+add_column(census_data, capital_difference = new_columns$capital_difference, relation = new_columns$relationship, .before = 'education')
+```
+
+Similary we can add rows with `add_row()`. Unprovided values are replaced with NA.
+
+```{r}
+add_row(census_data, age = 35, workclass = 'Private', marital_status = 'Divorced', occupation = "Tech-support", race = "White", sex = "Male",
+        capital_loss = 0, capital_gain = 0, income = '<=50K', .before = 3)
+```
+
+
+We can also apply a mutation over all columns or selected few using `mutate_all()`, `mutate_at()` or `mutate_if()`. For example we can log every numeric column or only *capital_loss* and *capital_gain*.
+
+```{r}
+mutate_if(census_data, is.numeric, log)
+mutate_at(census_data, vars(starts_with('capital')), log)
+```
+
+We can also use this to change the type of columns. Lets change every character column to factor.
+
+```{r}
+mutate_if(census_data, is.character, as.factor)
+```
+
+
+## Summarise
+
+We can use `summarise()` to compute summaries over different columns. Each summary is carried over whole table unless divided in groups by `group_by()` function. 
+
+```{r}
+summarise(census_data, avg_capital_gain = mean(capital_gain), avg_capital_loss = mean(capital_loss))
+```
+
+```{r}
+census_data %>% group_by(education) %>% summarise(avg_capital_gain = mean(capital_gain), avg_capital_loss = mean(capital_loss))
+```
+
+Function `count()` will also provide the size of each group.
+
+```{r}
+census_data %>% group_by(education) %>% count(avg_capital_gain = mean(capital_gain), avg_capital_loss = mean(capital_loss))
+```
+
+## Combining tables
+
+Columns *education* and *education_num* have the same meaning in census_data. We can extract one of these vales into separate table.
+
+```{r}
+education_table <- distinct(census_data, education, education_num)
+education_table
+census_table <- select(census_data, age, workclass, occupation, education_num, income)
+census_table
+```
+
+And join them back together using `inner_join()` similar to SQL join.
+
+```{r}
+inner_join(census_table, education_table, by = 'education_num')
+```
+
+We can also use left/right and full outer join.
+
+```{r}
+census_table$education_num <- na_if(census_table$education_num, 13)
+census_table
+left_join(census_table, education_table, by = 'education_num')
+right_join(census_table, education_table, by = 'education_num')
+full_join(census_table, education_table, by = 'education_num')
+```
