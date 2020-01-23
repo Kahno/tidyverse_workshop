@@ -11,7 +11,7 @@ output:
   
 #purrr
   
-  Purrr is a package that is in a way dpylr for lists. It can replace `apply()` and `invoke()` functions in R and works well with pipe since it has a defined output.
+**Purrr** is a package that is in a way **dpylr** for lists. It can replace `apply()` and `invoke()` functions from R and works well with pipe operator since it always has a defined output.
 
 ##map - the new apply
 
@@ -36,11 +36,12 @@ map_dbl(1:4, log)
 ```
 
 If the `map_x()` function cannot return desired type it returns an error.
+
 ```{r, eval=TRUE, error=TRUE}
 map_lgl(1:4, log)
 ```
 
-Map works with vectors or lists. Since data.frames and tibbles are just lists of columns in R, `map()` also works with them.
+Map works with vectors or lists. Since **data.frames** and **tibbles** are just lists of columns in R, `map()` also works with them.
 
 ```{r, eval=TRUE}
 football %>% select(HS:AR) %>% map_dbl(mean)
@@ -52,7 +53,7 @@ We can easily apply additional parameters to the called function.
 map_dbl(1:4, log, base = 2)
 ```
 
-### extended map functions
+### extended map() functions
 
 Function `map2()` takes two inputs, a function and returns the result as if the function was called with fun(x,y).
 
@@ -78,7 +79,7 @@ Or even shorter.
 map2_dbl(1:10, 10:1, ~ .x^2 / .y)
 ```
 
-Function `map_if()` takes a list, checks if list satisfies second condition and then runs the provided function. If the condition fails it returns input or `.else` function when provided.
+Function `map_if()` takes a list, checks if list satisfies a condition in the second parameter and then runs the provided function. If the condition fails it returns raw input or `.else` function when provided.
 
 
 ```{r, eval=TRUE}
@@ -93,7 +94,7 @@ Function `split()` is a base R function that splits the data using provided fact
 split(football, football$Div) 
 ```
 
-Lets try to combine all the knowlege from today and run a linear model for each division. Function `lm()` is in **stats** package which is not a part of tidyverse, meaning it does not take data as a first parameter by default.
+Lets try to combine all the knowlege from today and run a linear model for each division. Function `lm()` is in **stats** package which is not a part of **Tidyverse**, meaning it does not take data as a first parameter by default.
 
 For example lets try to predict home goals using linear model for the whole dataset. We will only use numeric atributes since we are using a linear model.
 
@@ -101,7 +102,7 @@ For example lets try to predict home goals using linear model for the whole data
 lm(FTHG ~ FTAG + HS + AS + HST + AST + HF + AF + HC + AC + HY + AY + HR + AR, football)
 ```
 
-Now lets look at another example where we will build a linear model for the difference between home team goals and away team goals for each division separately.
+Now lets look at another example where we will build a linear model for the score difference between home team goals and away team goals for each division separately.
 
 ```{r, eval=TRUE}
 paste_formula <- function(x){paste("diff ~", paste0(names(select(x, HS:AR)), collapse = " + "))}
@@ -142,9 +143,10 @@ invoke_map(list(runif, rnorm, sqrt, log), list(c(5,0,1), c(5,2,1), list(1:10), l
 
 ## Convenience functions
 
-Purrr also includes some convenience functions for working with list such as `flatten()` and `transpose()`.
+**Purrr** also includes some convenience functions for working with list such as `flatten()` and `transpose()`.
 ```{r, eval=TRUE}
 temp_list <- pmap(list(rep(c(2,4), 2), 1:4, seq(1,5, length.out = 4)), rnorm)
+temp_list
 ```
 
 Function `flatten()` flattens the list making it longer but each list having one value.
@@ -153,7 +155,7 @@ Function `flatten()` flattens the list making it longer but each list having one
 flatten(temp_list)
 ```
 
-Function `transose()` tries to transpose a list similar to transposing matrix.
+Function `transpose()` tries to transpose a list similar to transposing matrix.
 
 ```{r, eval=TRUE}
 transpose(temp_list)
@@ -245,7 +247,7 @@ football %>%
 
 ## Exercise 1
 
-A dataset `who` in R has turbecolusis data from World Health Organization. You can get a short description of the table by writing `?who` in console.
+A dataset `who` in R has turbecolusis data from World Health Organization. You can get a short description of the data by writing `?who` in console.
 
 The data is in wide format. Transform it into long format so that you obtain a table with attributes: country, iso2, iso3, year, group, cases.
 

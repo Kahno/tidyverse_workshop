@@ -121,7 +121,9 @@ a.sourceLine {
 <li><a href="#set-up">Set up</a></li>
 <li><a href="#reading-data-sets-from-files">Reading data sets from files</a><ul>
 <li><a href="#readr-vs-utils">readr vs utils</a></li>
-<li><a href="#tibble-vs-data.frame">tibble vs data.frame</a></li>
+<li><a href="#tibble-vs-data.frame">tibble vs data.frame</a><ul>
+<li><a href="#custom-printing">Custom printing</a></li>
+</ul></li>
 </ul></li>
 <li><a href="#tidyr---tidy-up-data">tidyr - tidy up data</a><ul>
 <li><a href="#pipe-operator">pipe operator</a></li>
@@ -143,7 +145,7 @@ a.sourceLine {
     <section id="main-content">
 <div id="tidyverse" class="section level1">
 <h1>Tidyverse</h1>
-<p>Tidyverse (<a href="https://www.tidyverse.org/" class="uri">https://www.tidyverse.org/</a>) is a collection of packages for R language (<a href="https://www.r-project.org/" class="uri">https://www.r-project.org/</a>). It is composed of core tidyverse packages:</p>
+<p><strong>Tidyverse</strong> (<a href="https://www.tidyverse.org/" class="uri">https://www.tidyverse.org/</a>) is a collection of packages for R language (<a href="https://www.r-project.org/" class="uri">https://www.r-project.org/</a>). It is composed of the following core <strong>Tidyverse packages</strong>:</p>
 <ul>
 <li>Tidyverse:
 <ul>
@@ -155,48 +157,49 @@ a.sourceLine {
 <li>ggplot2</li>
 </ul></li>
 </ul>
-<p>There are many more packages in tidyverse such as lubridate, stringr, forcats, etc… In this workshop we will do a short overview of five core packages. The core packages include:</p>
+<p>There are many more packages in <strong>Tidyverse</strong> such as <strong>lubridate</strong>, <strong>stringr</strong>, <strong>forcats</strong>, etc… In this workshop we will do a short demonstration of five core packages but will skip <strong>ggplot2</strong>.</p>
 <div id="tibble" class="section level2">
 <h2>tibble</h2>
-<p>An alternative for data.frame called <strong>tibble</strong> or <strong>tbl_df</strong>. Tibble has mainly improve prints and always returns a tibble if we subset it.</p>
+<p>An alternative for <strong>data.frame</strong> called <strong>tibble</strong> or <strong>tbl_df</strong>. <strong>Tibble</strong> has mainly improved prints and always returns a <strong>tibble</strong> if we subset it.</p>
 </div>
 <div id="readr" class="section level2">
 <h2>readr</h2>
-<p>Package readr is a package for reading data from .csv files with improved defaults over <code>read.csv()</code> function from <strong>utils</strong> package.</p>
+<p>Package <strong>readr</strong> is a package for reading data from .csv files with improved default values over using <code>read.csv()</code> function from <strong>utils</strong> package.</p>
 </div>
 <div id="tidyr" class="section level2">
 <h2>tidyr</h2>
-<p>Package for tidiyng data. This means that we want to have a data set where each table has one kind of observations. Each column in each table represents an attribute and each row an observation. Also includes functions to transform data from long to wide format and vice versa.</p>
+<p>Package for tidiyng data. This means that we want to have a dataset where each table has one kind of observations. Each column in each table represents an attribute and each row an observation. For those familiar with SQL it is same as having tables in third normal form. Also includes functions to transform data from long to wide format and vice versa.</p>
 </div>
 <div id="dplyr" class="section level2">
 <h2>dplyr</h2>
-<p>Main package for transforming data to the desired structured. Tidiying and transforming data is also called wrangling and is done at the same time.</p>
+<p>Main package for transforming data to the desired structure. Tidiying and transforming data is also called wrangling and is usually done at the same time.</p>
 </div>
 <div id="purrr" class="section level2">
 <h2>purrr</h2>
-<p>An alternative to Rs in-built <code>apply()</code> functions. Allows to run same function over list or vectors.</p>
+<p>An alternative to Rs in-built <code>apply()</code> family of functions and in a way <strong>dplry</strong> for lists. Allows us to run same function over list or vectors.</p>
 </div>
 <div id="ggplot2" class="section level2">
 <h2>ggplot2</h2>
-<p>A package used make beautiful graphs.</p>
+<p>A package used to make beautiful graphs.</p>
 </div>
 </div>
 <div id="set-up" class="section level1">
 <h1>Set up</h1>
-<p>Before we begin lets set working directory to the directory with course materials. To check current working directory you can use ‘getwd()’ command.</p>
+<p>Before we begin lets set working directory to the directory with course materials. To check current working directory you can use <code>getwd()</code> command.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">getwd</span>()</code></pre></div>
 <p>The following command ‘setwd()’ will change your working directory to ‘C:/Workshop/Tidyverse’:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">setwd</span>(<span class="st">&quot;C:/Workshop/Tidyverse&quot;</span>)</code></pre></div>
-<p>Next install and load all the packages in tidyverse with next two lines.</p>
+<p>Next install and load all the packages in <strong>Tidyverse</strong> with next two lines.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>)
 <span class="kw">library</span>(tidyverse)</code></pre></div>
+<p>This will install all the core packages in <strong>Tidyverse</strong> and all its dependencies.</p>
 </div>
 <div id="reading-data-sets-from-files" class="section level1">
 <h1>Reading data sets from files</h1>
-<p>We will focus on reading .csv files and compare the process to the in-build functions. Package <strong>readr</strong> also allows to read excel spreadsheets, SPSS data, xml files, etc…</p>
+<p>We will first focus on reading .csv files from disk and compare the process to the in-build functions. Package <strong>readr</strong> also allows to read types of files.</p>
 <div id="readr-vs-utils" class="section level2">
 <h2>readr vs utils</h2>
-<p>Both packages are used to read data from a .csv file. Lets load census.csv dataset with both packages. Tidyverse tries to remove the use of ‘.’ from variable and function names, so you can recognize tidyverse functions because they use underscore (’_‘) instead of dot (’.’) in names.</p>
+<p>Both packages can be used to read data from a .csv file. Lets load <em>census.csv</em> dataset with both packages. <strong>Tidyverse</strong> tries to remove the use of ‘.’ in variable and function names, so you can recognize <strong>Tidyverse</strong> functions by their use of underscore (’_‘) instead of dot (’.’) in names.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">census.data &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;./data/census.csv&quot;</span>) <span class="co">#utils function</span>
 census_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;./data/census.csv&quot;</span>) <span class="co">#readr function</span></code></pre></div>
 <pre><code>## Parsed with column specification:
@@ -369,17 +372,17 @@ census_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span
 ##  9    31 Private    45781 Masters                14 Never-married    Prof-spec~ Not-in-fami~ White Fema~          14084              0               50
 ## 10    42 Private   159449 Bachelors              13 Married-civ-spo~ Exec-mana~ Husband      White Male            5178              0               40
 ## # ... with 32,551 more rows, and 2 more variables: `native-country` &lt;chr&gt;, income &lt;chr&gt;</code></pre>
-<p>We will put both tables in a list so we can easily apply same functions to both tables with ‘lapply()’ for comparision.</p>
+<p>We will put both tables in a list so we can easily apply same functions to both tables with <code>lapply()</code> for comparision.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data_list &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">BasicR =</span> census.data, <span class="dt">TidyR =</span> census_data)</code></pre></div>
-<p>Both functions successfully loaded the file with default parameters but there are few differences. Lets check the class of both variables.</p>
+<p>Both functions successfully loaded the file using default parameters but there are few differences in the final result. Lets check the class of both variables.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lapply</span>(data_list, class)</code></pre></div>
 <pre><code>## $BasicR
 ## [1] &quot;data.frame&quot;
 ## 
 ## $TidyR
 ## [1] &quot;spec_tbl_df&quot; &quot;tbl_df&quot;      &quot;tbl&quot;         &quot;data.frame&quot;</code></pre>
-<p>Function read.csv returns a <code>data.frame</code> which is a basic data structure for data analysis in R. Function <code>read_csv()</code> on the other hand returns multiclass object that extends <code>data.frame</code>, more commonly known as <strong>tibble</strong> or <strong>tbl_df</strong>.</p>
-<p>When using tibble, the <code>print()</code> function tries to fit output on screen to make the information more condense and readable. Printing data.frame tries to simply write everything on screen. You can use <code>head()</code> function to make results more comparable.</p>
+<p>Function <code>read.csv()</code> returns a <strong>data.frame</strong> which is a basic data structure for data analysis in R. Function <code>read_csv()</code> on the other hand returns multiclass object that extends <code>data.frame</code>, more commonly known as <strong>tibble</strong> or <strong>tbl_df</strong>.</p>
+<p>When using <strong>tibble</strong>, the <code>print()</code> function tries to fit output on screen to make the information more condense and readable. Printing <strong>data.frame</strong> tries to simply write everything on screen. You can use <code>head()</code> function to make results more comparable.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lapply</span>(data_list, head)</code></pre></div>
 <pre><code>## $BasicR
 ##   age         workclass fnlwgt  education education.num      marital.status         occupation   relationship   race     sex capital.gain capital.loss hours.per.week
@@ -408,7 +411,7 @@ census_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span
 ## 5    28 Private   338409 Bachelors              13 Married-civ-spo~ Prof-spec~ Wife         Black Fema~              0              0               40
 ## 6    37 Private   284582 Masters                14 Married-civ-spo~ Exec-mana~ Wife         White Fema~              0              0               40
 ## # ... with 2 more variables: `native-country` &lt;chr&gt;, income &lt;chr&gt;</code></pre>
-<p>Tibble also shows some extra information as the size of the table and class of columns. Looking at the class of <code>census.data</code> we can see that the classes of attribtes differ. We would need to use parameter <code>stringsAsFactors = FALSE</code> while using <code>read.csv()</code> to avoid conversion to factors at read time.</p>
+<p><strong>Tibble</strong> also shows some extra information, such as the size of the table and class of columns. Looking at the class of <code>census.data</code> we can see that the attribute classes differ between tables. We would need to use parameter <code>stringsAsFactors = FALSE</code> while using <strong>utils</strong> <code>read.csv()</code> to avoid conversion to factors at read time.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lapply</span>(data_list, <span class="cf">function</span>(x) {<span class="kw">sapply</span>(x, class)})</code></pre></div>
 <pre><code>## $BasicR
 ##            age      workclass         fnlwgt      education  education.num marital.status     occupation   relationship           race            sex   capital.gain 
@@ -421,8 +424,8 @@ census_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span
 ##      &quot;numeric&quot;    &quot;character&quot;      &quot;numeric&quot;    &quot;character&quot;      &quot;numeric&quot;    &quot;character&quot;    &quot;character&quot;    &quot;character&quot;    &quot;character&quot;    &quot;character&quot;      &quot;numeric&quot; 
 ##   capital-loss hours-per-week native-country         income 
 ##      &quot;numeric&quot;      &quot;numeric&quot;    &quot;character&quot;    &quot;character&quot;</code></pre>
-<p>Note that the utils <code>read.csv()</code> function also changed the name of ‘education-num’ attribute to ‘education.num’. This means that you can’t just replace <code>read.csv()</code> with <code>read_csv()</code> because it will lead to errors later in the script.</p>
-<p>OK, these are the differenes while reading the file. Lets write the data back…</p>
+<p>Note that the <strong>utils</strong> <code>read.csv()</code> function also changed the name of <code>education-num</code> attribute to <code>education.num</code>. This means that you can’t just replace <code>read.csv()</code> with <code>read_csv()</code> and expect existing scripts to work because it will lead to errors later in the script.</p>
+<p>OK, these are the differences while reading the file. Lets write the data back…</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">write.csv</span>(census.data, <span class="dt">file =</span> <span class="st">&quot;./data/censusR.csv&quot;</span>) <span class="co">#Basic R</span>
 <span class="kw">write_csv</span>(census.data, <span class="dt">path =</span> <span class="st">&quot;./data/censusTidy.csv&quot;</span>) <span class="co">#Tidyverse</span></code></pre></div>
 <p>…and read it again.</p>
@@ -474,7 +477,7 @@ census2_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<spa
 ## 4    53 Private     234721 11th                  7 Married-civ-sp~ Handlers-c~ Husband      Black Male             0            0             40 United-States  &lt;=50K 
 ## 5    28 Private     338409 Bachelors            13 Married-civ-sp~ Prof-speci~ Wife         Black Fema~            0            0             40 Cuba           &lt;=50K 
 ## 6    37 Private     284582 Masters              14 Married-civ-sp~ Exec-manag~ Wife         White Fema~            0            0             40 United-States  &lt;=50K</code></pre>
-<p>You can see that the basic R has quite nonintuitive defaults since by writing and loading a table we constructed a new column ‘X’ with unique id. The basic R file is also bigger, around 4.5MB, while tidyverse version is only 3.7MB.</p>
+<p>You can see that the basic R has quite non-intuitive defaults since by writing and loading a table we constructed a new column ‘X’ with unique id. The basic R file is also bigger, around 4.5MB, while tidyverse version is only 3.7MB. Both are .txt files but <strong>utils</strong> package adds id and quotes around every value.</p>
 <p>The unavailable data is marked with “?” in this dataset. Lets try to read the files so that those values will be replaced with R value NA (Not Available).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">census.data &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;./data/census.csv&quot;</span>, <span class="dt">na.strings =</span> <span class="st">&quot;?&quot;</span>) <span class="co">#Basic R</span>
 census_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;./data/census.csv&quot;</span>, <span class="dt">na =</span> <span class="st">&quot;?&quot;</span>) <span class="co">#Tidyverse (We can provide a vector of NA values)</span></code></pre></div>
@@ -510,11 +513,11 @@ census_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span
 ##   &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt;          &lt;dbl&gt;          &lt;dbl&gt;            &lt;dbl&gt;
 ## 1    32 &lt;NA&gt;      293936 7th-8th                 4 Married-spouse-~ &lt;NA&gt;       Not-in-fami~ White Male               0              0               40
 ## # ... with 2 more variables: `native-country` &lt;chr&gt;, income &lt;chr&gt;</code></pre>
-<p>Table read using <code>read.csv()</code> still has “?” value. The reason is that <code>read.csv()</code> didn’t remove leading spaces. We should use <code>na.strings = &quot; ?&quot;</code>.</p>
+<p>Table read using <code>read.csv()</code> still has the “?” values. The reason is that <code>read.csv()</code> didn’t remove leading spaces. We should use <code>na.strings = &quot; ?&quot;</code>.</p>
 </div>
 <div id="tibble-vs-data.frame" class="section level2">
 <h2>tibble vs data.frame</h2>
-<p>Using tibble package we can transfrom data.frame to a tibble using <code>as_tibble()</code> function.</p>
+<p>Using <strong>tibble</strong> package we can transfrom <strong>data.frame</strong> to a tibble using <code>as_tibble()</code> function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as_tibble</span>(census.data)</code></pre></div>
 <pre><code>## # A tibble: 32,561 x 15
 ##      age workclass  fnlwgt education  education.num marital.status  occupation relationship race  sex   capital.gain capital.loss hours.per.week native.country income
@@ -530,10 +533,13 @@ census_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span
 ##  9    31 &quot; Private&quot;  45781 &quot; Masters&quot;            14 &quot; Never-marrie~ &quot; Prof-sp~ &quot; Not-in-fa~ &quot; Wh~ &quot; Fe~        14084            0             50 &quot; United-Stat~ &quot; &gt;50~
 ## 10    42 &quot; Private&quot; 159449 &quot; Bachelo~            13 &quot; Married-civ-~ &quot; Exec-ma~ &quot; Husband&quot;   &quot; Wh~ &quot; Ma~         5178            0             40 &quot; United-Stat~ &quot; &gt;50~
 ## # ... with 32,551 more rows</code></pre>
-<p>Note that the types and names of attributes are now different as we would got them while reading directly from file since <code>read.csv()</code> function changed their names. In html markdown it is also visible that the <code>read.csv()</code> added an extra space to all factors.</p>
+<p>Note that the types and names of attributes are now different as we would got them while reading directly from file since <code>read.csv()</code> function already changed their names. In html markdown it is also visible that the <code>read.csv()</code> added an extra space to all factors.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(<span class="kw">as.character</span>(census.data<span class="op">$</span>workclass))</code></pre></div>
 <pre><code>## [1] &quot; State-gov&quot;        &quot; Self-emp-not-inc&quot; &quot; Private&quot;          &quot; Federal-gov&quot;      &quot; Local-gov&quot;        &quot; ?&quot;                &quot; Self-emp-inc&quot;     &quot; Without-pay&quot;     
 ## [9] &quot; Never-worked&quot;</code></pre>
+<p>Transforming an existing <strong>data.frame</strong> to <strong>tibble</strong> usually makes scripts a bit more compatible.</p>
+<div id="custom-printing" class="section level3">
+<h3>Custom printing</h3>
 <p>We saw that tibble always condenses output. We can print custom number of rows using print.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(census_data, <span class="dt">n =</span> <span class="dv">15</span>)</code></pre></div>
 <pre><code>## # A tibble: 32,561 x 15
@@ -602,7 +608,7 @@ census_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span
 ## $ `hours-per-week` &lt;dbl&gt; 40, 13, 40, 40, 40, 40, 16, 45, 50, 40, 80, 40, 30, 50, 40, 45, 35, 40, 50, 45, 60, 20, 40, 40, 40, 40, 40, 60, 80, 40, 52, 44, 40, 40, ...
 ## $ `native-country` &lt;chr&gt; &quot;United-States&quot;, &quot;United-States&quot;, &quot;United-States&quot;, &quot;United-States&quot;, &quot;Cuba&quot;, &quot;United-States&quot;, &quot;Jamaica&quot;, &quot;United-States&quot;, &quot;United-States&quot;...
 ## $ income           &lt;chr&gt; &quot;&lt;=50K&quot;, &quot;&lt;=50K&quot;, &quot;&lt;=50K&quot;, &quot;&lt;=50K&quot;, &quot;&lt;=50K&quot;, &quot;&lt;=50K&quot;, &quot;&lt;=50K&quot;, &quot;&gt;50K&quot;, &quot;&gt;50K&quot;, &quot;&gt;50K&quot;, &quot;&gt;50K&quot;, &quot;&gt;50K&quot;, &quot;&lt;=50K&quot;, &quot;&lt;=50K&quot;, &quot;&gt;50K&quot;, &quot;&lt;=50K&quot;...</code></pre>
-<p>Tibbles are more consistent. If we select columns using [] we always get a tibble back. Using [[]] or $ always returns a vector. With data.frame the return type depends on how many columns we selected.</p>
+<p><strong>Tibbles</strong> are more consistent. If we select columns using [] we always get a <strong>tibble</strong> back. Using [[]] or $ always returns a vector. With <strong>data.frame</strong> the return type depends on how many columns we selected.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(census.data)</code></pre></div>
 <pre><code>## [1] &quot;data.frame&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(census.data[,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>])</code></pre></div>
@@ -615,6 +621,7 @@ census_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span
 <pre><code>## [1] &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(census_data[,<span class="dv">5</span>])</code></pre></div>
 <pre><code>## [1] &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</code></pre>
+<p>Lets print actual selected data.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lapply</span>(data_list, <span class="cf">function</span>(x){x[,<span class="dv">5</span>]})</code></pre></div>
 <pre><code>## $BasicR
 ##    [1] 13 13  9  7 13 14  5  9 14 13 10 13 13 12 11  4  9  9  7 14 16  9  5  7  9 13  9 10  9  9 12 10 13 10 10  7 10  9 10 12  5 13 13  9  9 13  9 14 11 11 10  9 15
@@ -653,7 +660,8 @@ census_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span
 ##  9              14
 ## 10              13
 ## # ... with 32,551 more rows</code></pre>
-<p>R always tries to simplify the answer so it returns a vector instead of data.frame if we only return one column. Tidyverse returns a table of size <span class="math inline">\(n \times 1\)</span>. This is useful to make pipelining easier (%&gt;%). We will use pipe operator later.</p>
+<p>R always tries to simplify the answer so it returns a vector instead of <strong>data.frame</strong> if we only return one column. <strong>Tidyverse</strong> returns a table of size <span class="math inline">\(n \times 1\)</span>. This is useful to make pipelining easier (%&gt;%). We will use pipe operator later.</p>
+</div>
 </div>
 </div>
 <div id="tidyr---tidy-up-data" class="section level1">
@@ -695,8 +703,8 @@ census_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span
 ## #   movie_imdb_link &lt;chr&gt;, num_user_for_reviews &lt;dbl&gt;, language &lt;chr&gt;, country &lt;chr&gt;, content_rating &lt;chr&gt;, budget &lt;dbl&gt;, title_year &lt;dbl&gt;,
 ## #   actor_2_facebook_likes &lt;dbl&gt;, imdb_score &lt;dbl&gt;, aspect_ratio &lt;dbl&gt;, movie_facebook_likes &lt;dbl&gt;</code></pre>
 <p>This dataset has 27 attributes, from director name, top 3 leading author names, their facebook likes, gross income, genre etc…</p>
-<p>Before we start using <strong>tidyr</strong> we will skip ahead and use two very usefull function from <strong>dplyr</strong> package namely <code>select()</code> and <code>filter()</code>. These two functions are used for selecting desired columns and rows. Tidying (tidyr) and transforming (dplyr) data is called wrangling and is usually done together this is why we will already use few functions from <strong>dplyr</strong> here.</p>
-<p>First lets just select a small subset of atttributes from movies dataset. This can be done with `select()’.</p>
+<p>Before we start using <strong>tidyr</strong> we will skip ahead and use two very usefull function from <strong>dplyr</strong> package namely <code>select()</code> and <code>filter()</code>. These two functions are used for selecting desired columns and rows. Tidying (tidyr) and transforming (dplyr) data is called <strong>wrangling</strong> and is usually done together this is why we will already use few functions from <strong>dplyr</strong> here.</p>
+<p>First lets just select a small subset of atttributes from movies dataset for easier demonstration. This can be done with `select()’.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">movies_small &lt;-<span class="st"> </span><span class="kw">select</span>(movies, movie_title, director_name, actor_1_name, actor_2_name, actor_3_name, genres)
 movies_small</code></pre></div>
 <pre><code>## # A tibble: 5,043 x 6
@@ -726,7 +734,7 @@ movies_small</code></pre></div>
 ## 6 Here Comes the Boom         Frank Coraci  Salma Hayek    Reggie Lee       Charice           Action|Comedy|Sport         
 ## 7 The Waterboy                Frank Coraci  Adam Sandler   Clint Howard     Peter Dante       Comedy|Sport                
 ## 8 Around the World in 80 Days Frank Coraci  Jim Broadbent  Steve Coogan     Cécile De France  Action|Adventure|Comedy</code></pre>
-<p><code>filter()</code> selects rows that satisfy the given condition. Here we can see that some rows repeat which we do not want since this is the same observation. We can remove it with <code>distinct()</code> (dplyr). Later we will have another look at <code>filter()</code> options.</p>
+<p><code>filter()</code> selects rows that satisfy the given condition. Here we can see that some rows repeat which we do not want since this is the same observation. We can remove it with <code>distinct()</code> (<strong>dplyr</strong>). Later we will have another look at <code>filter()</code> options.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">movies_small &lt;-<span class="st"> </span><span class="kw">distinct</span>(movies_small)
 movies_small</code></pre></div>
 <pre><code>## # A tibble: 4,920 x 6
@@ -745,7 +753,7 @@ movies_small</code></pre></div>
 ## # ... with 4,910 more rows</code></pre>
 <div id="pipe-operator" class="section level2">
 <h2>pipe operator</h2>
-<p>We could do the same as above without saving intermidiate result using pipeline or nested functions. The pipe operator %&gt;% takes the result of a function and passes it as a first argument to the next function. This means writing x %&gt;% f(y) is the same as f(x,y) or extended x %&gt;% f(y) %&gt;% g(z) is the same as g(f(x, y),z) and so on.</p>
+<p>We could do the same as above without saving intermidiate result using pipeline or nested functions. The pipe operator %&gt;% takes the result of a function and passes it as a first argument to the next function. This means writing x %&gt;% f(y) is the same as f(x,y) or extended x %&gt;% f(y) %&gt;% g(z) is the same as g(f(x, y),z) and so on. For example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">movies <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(movie_title, director_name, actor_1_name, actor_2_name, actor_3_name, genres) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(director_name <span class="op">==</span><span class="st"> &quot;Frank Coraci&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">distinct</span>()</code></pre></div>
 <pre><code>## # A tibble: 7 x 6
 ##   movie_title                 director_name actor_1_name   actor_2_name     actor_3_name      genres                      
@@ -760,7 +768,7 @@ movies_small</code></pre></div>
 </div>
 <div id="reshaping-and-splitting" class="section level2">
 <h2>Reshaping and splitting</h2>
-<p>From here on we will use movies_small table to show how to tidy up this dataset.</p>
+<p>From here on we will use <code>movies_small</code> table to show how to tidy up this dataset.</p>
 <p>If we wish to filter by actor name the provided table is a bit tricky since we need to search in three different columns. Lets <code>gather()</code> this information in a single column.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">movies_small &lt;-<span class="st"> </span><span class="kw">gather</span>(movies_small, <span class="st">'actor_1_name'</span>, <span class="st">'actor_2_name'</span>, <span class="st">'actor_3_name'</span>, <span class="dt">key =</span> <span class="st">&quot;Actor_number&quot;</span>, <span class="dt">value =</span> <span class="st">&quot;Actor_name&quot;</span>)
 movies_small</code></pre></div>
@@ -789,7 +797,7 @@ movies_small</code></pre></div>
 ## 4 Spectre     Sam Mendes    Action|Adventure|Thriller       actor_2_name Rory Kinnear    
 ## 5 Avatar      James Cameron Action|Adventure|Fantasy|Sci-Fi actor_3_name Wes Studi       
 ## 6 Spectre     Sam Mendes    Action|Adventure|Thriller       actor_3_name Stephanie Sigman</code></pre>
-<p>Or we can see all the movies Tom Hanks played one of the leading roles.</p>
+<p>Or we can see all the movies in which Tom Hanks played one of the leading roles.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">filter</span>(movies_small, Actor_name <span class="op">==</span><span class="st"> &quot;Tom Hanks&quot;</span>)</code></pre></div>
 <pre><code>## # A tibble: 28 x 5
 ##    movie_title         director_name    genres                                    Actor_number Actor_name
@@ -805,7 +813,7 @@ movies_small</code></pre></div>
 ##  9 The Terminal        Steven Spielberg Comedy|Drama                              actor_1_name Tom Hanks 
 ## 10 Saving Private Ryan Steven Spielberg Action|Drama|War                          actor_1_name Tom Hanks 
 ## # ... with 18 more rows</code></pre>
-<p>The above step is called transforming a table from wide format to long format.</p>
+<p>The above step is sometimes called transforming a table from wide format to long format.</p>
 <p>A good pratice is that each cell only has one value. Attribute generes should be split into multiple lines since it has multiple values separated by ‘|’. We can use <code>separate_rows()</code> for this.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">separate_rows</span>(movies_small, genres, <span class="dt">sep =</span> <span class="st">&quot;[|]&quot;</span>)</code></pre></div>
 <pre><code>## # A tibble: 42,405 x 5
@@ -862,7 +870,7 @@ movies_long</code></pre></div>
 ##  9 10 Cloverfield Lane duration   104
 ## 10 10 Cloverfield Lane year      2016
 ## # ... with 9,824 more rows</code></pre>
-<p>Here we used <code>tibble()</code> function to construct a table from vectors and then applied <code>arrange()</code> (dplyr) to sorts the observations by given attribute name. This simple data set has each movie listed twice once with its duration and once with its year of release. Since two rows describe same movie we want to put all values in the same row. We had to remove duplicates since spread does not work if all the values are not unique.</p>
+<p>Here we used <code>tibble()</code> function to construct a table from vectors and then applied <code>arrange()</code> (<strong>dplyr</strong>) to sort the observations by given attribute name. This simple data set has each movie listed twice once with its duration and once with its year of release. Since two rows describe same movie we want to put all values in the same row. We had to remove duplicates since spread does not work if all the values are not unique.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">spread</span>(movies_long, <span class="dt">key =</span> key, <span class="dt">value =</span> value)</code></pre></div>
 <pre><code>## # A tibble: 4,917 x 3
 ##    movie_title                duration  year
@@ -895,7 +903,7 @@ movies_long</code></pre></div>
 ##  9 Avengers: Age of Ultron                     Joss Whedon       Chris Hemsworth | Robert Downey Jr. | Scarlett Johansson
 ## 10 Harry Potter and the Half-Blood Prince      David Yates       Alan Rickman | Daniel Radcliffe | Rupert Grint          
 ## # ... with 5,033 more rows</code></pre>
-<p>If you need permutation of all the values of few attributes you can use <code>expand()</code>.</p>
+<p>If you need permutation of all the values of few attributes you can use <code>expand()</code> which can be usefull for constructing some tests.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">expand</span>(<span class="kw">tibble</span>(<span class="dt">num =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>), <span class="dt">char =</span> <span class="kw">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;c&quot;</span>), <span class="dt">num2 =</span> <span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>)), num, char)</code></pre></div>
 <pre><code>## # A tibble: 9 x 2
 ##     num char 
@@ -931,7 +939,7 @@ movies_long</code></pre></div>
 ## # ... with 3,747 more rows, and 15 more variables: cast_total_facebook_likes &lt;dbl&gt;, actor_3_name &lt;chr&gt;, facenumber_in_poster &lt;dbl&gt;, plot_keywords &lt;chr&gt;,
 ## #   movie_imdb_link &lt;chr&gt;, num_user_for_reviews &lt;dbl&gt;, language &lt;chr&gt;, country &lt;chr&gt;, content_rating &lt;chr&gt;, budget &lt;dbl&gt;, title_year &lt;dbl&gt;,
 ## #   actor_2_facebook_likes &lt;dbl&gt;, imdb_score &lt;dbl&gt;, aspect_ratio &lt;dbl&gt;, movie_facebook_likes &lt;dbl&gt;</code></pre>
-<p>We lost information for around 1300 movies this way. <code>drop_na()</code> removes any observation that has a missing values anywhere in the table. We can only remove observations that are missing specific value.</p>
+<p>We lost information for around 1300 movies doing this. <code>drop_na()</code> removes any observation that has a missing values anywhere in the table. We can only remove observations that are missing specific value.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">drop_na</span>(movies, country)</code></pre></div>
 <pre><code>## # A tibble: 5,038 x 27
 ##    director_name num_critic_for_~ duration director_facebo~ actor_3_faceboo~ actor_2_name actor_1_faceboo~  gross genres actor_1_name movie_title num_voted_users
@@ -949,7 +957,7 @@ movies_long</code></pre></div>
 ## # ... with 5,028 more rows, and 15 more variables: cast_total_facebook_likes &lt;dbl&gt;, actor_3_name &lt;chr&gt;, facenumber_in_poster &lt;dbl&gt;, plot_keywords &lt;chr&gt;,
 ## #   movie_imdb_link &lt;chr&gt;, num_user_for_reviews &lt;dbl&gt;, language &lt;chr&gt;, country &lt;chr&gt;, content_rating &lt;chr&gt;, budget &lt;dbl&gt;, title_year &lt;dbl&gt;,
 ## #   actor_2_facebook_likes &lt;dbl&gt;, imdb_score &lt;dbl&gt;, aspect_ratio &lt;dbl&gt;, movie_facebook_likes &lt;dbl&gt;</code></pre>
-<p>We only removed 5 movies which have a missing country field.</p>
+<p>We only removed 5 movies which have a missing country field in this case.</p>
 <p>Sometimes if the data is in some way ordered we can replace the values with the value above or below it.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">movies</code></pre></div>
 <pre><code>## # A tibble: 5,043 x 27
@@ -986,7 +994,7 @@ movies_long</code></pre></div>
 ## #   movie_imdb_link &lt;chr&gt;, num_user_for_reviews &lt;dbl&gt;, language &lt;chr&gt;, country &lt;chr&gt;, content_rating &lt;chr&gt;, budget &lt;dbl&gt;, title_year &lt;dbl&gt;,
 ## #   actor_2_facebook_likes &lt;dbl&gt;, imdb_score &lt;dbl&gt;, aspect_ratio &lt;dbl&gt;, movie_facebook_likes &lt;dbl&gt;</code></pre>
 <p>Usually most useful solution is by using <code>replace_na()</code> function which allows us to replace missing values with choosen value.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">replace_na</span>(movies, <span class="kw">list</span>(<span class="dt">duration =</span> <span class="kw">round</span>(<span class="kw">mean</span>(movies<span class="op">$</span>duration, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)), <span class="dt">num_critic_for_reviews =</span> <span class="dv">0</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">replace_na</span>(movies, <span class="kw">list</span>(<span class="dt">num_critic_for_reviews =</span> <span class="dv">0</span>, <span class="dt">duration =</span> <span class="kw">round</span>(<span class="kw">mean</span>(movies<span class="op">$</span>duration, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>))))</code></pre></div>
 <pre><code>## # A tibble: 5,043 x 27
 ##    director_name num_critic_for_~ duration director_facebo~ actor_3_faceboo~ actor_2_name actor_1_faceboo~   gross genres actor_1_name movie_title num_voted_users
 ##    &lt;chr&gt;                    &lt;dbl&gt;    &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt; &lt;chr&gt;                   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;        &lt;chr&gt;                 &lt;dbl&gt;
@@ -1008,7 +1016,7 @@ movies_long</code></pre></div>
 </div>
 <div id="dplyr---transforming-data" class="section level1">
 <h1>dplyr - transforming data</h1>
-<p>We will now go to the last part which is transforming data. We will again use census data.</p>
+<p>We will now go to the last part of cleaning data which is transforming data. We will again use census dataset.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">census_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;./data/census.csv&quot;</span>, <span class="dt">na =</span> <span class="st">&quot;?&quot;</span>, <span class="dt">col_types =</span> <span class="kw">cols</span>(<span class="dt">age =</span> <span class="kw">col_integer</span>(), <span class="dt">education =</span> <span class="kw">col_factor</span>(), <span class="st">'education-num'</span> =<span class="st"> </span><span class="kw">col_integer</span>()))
 census_data</code></pre></div>
 <pre><code>## # A tibble: 32,561 x 15
@@ -1045,7 +1053,7 @@ census_data</code></pre></div>
 ## # ... with 32,551 more rows, and 2 more variables: `native-country` &lt;chr&gt;, income &lt;chr&gt;</code></pre>
 <div id="filter" class="section level2">
 <h2>Filter</h2>
-<p>The <code>filter()</code> function allows us to select rows, based on values of the variables as we already explored before. As input it gets a tibble and the conditions or row selection and it outputs a new tibble that consists only of desired rows.</p>
+<p>The <code>filter()</code> function allows us to select rows, based on values of the variables as we already explored before. As input it gets a <strong>tibble</strong> and the conditions or row selection and it outputs a new tibble that consists only of desired rows.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">filter</span>(census_data, workclass <span class="op">==</span><span class="st"> &quot;Private&quot;</span>) <span class="co">#Selects all rows with value Private</span></code></pre></div>
 <pre><code>## # A tibble: 22,696 x 15
 ##      age workclass fnlwgt education `education-num` `marital-status` occupation relationship race  sex   `capital-gain` `capital-loss` `hours-per-week`
@@ -1091,7 +1099,7 @@ census_data</code></pre></div>
 ##  9    18 Private   140164 11th                    7 Never-married    Sales      Own-child    White Fema~              0              0               40
 ## 10    17 Private    65368 11th                    7 Never-married    Sales      Own-child    White Fema~              0              0               12
 ## # ... with 1,165 more rows, and 2 more variables: `native-country` &lt;chr&gt;, income &lt;chr&gt;</code></pre>
-<p>We can use logical or in conditions</p>
+<p>We can use logical ‘or’ in conditions</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">filter</span>(census_data, relationship <span class="op">==</span><span class="st"> &quot;Husband&quot;</span> <span class="op">|</span><span class="st"> </span>relationship <span class="op">==</span><span class="st"> &quot;Wife&quot;</span>)</code></pre></div>
 <pre><code>## # A tibble: 14,761 x 15
 ##      age workclass fnlwgt education `education-num` `marital-status` occupation relationship race  sex   `capital-gain` `capital-loss` `hours-per-week`
@@ -1322,7 +1330,7 @@ new_columns</code></pre></div>
 ##  9    31 Private     45781 Masters              14 Never-married   Prof-speci~ Not-in-fami~ White Fema~         9.55         -Inf             50 United-States  &gt;50K  
 ## 10    42 Private    159449 Bachelors            13 Married-civ-sp~ Exec-manag~ Husband      White Male          8.55         -Inf             40 United-States  &gt;50K  
 ## # ... with 32,551 more rows</code></pre>
-<p>We can also use this to change the type of columns. Lets change every character column to factor.</p>
+<p>We can also use this to change the type of columns. Lets change every character type column to factor.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mutate_if</span>(census_data, is.character, as.factor)</code></pre></div>
 <pre><code>## # A tibble: 32,561 x 15
 ##      age workclass  fnlwgt education education_num marital_status  occupation  relationship race  sex   capital_gain capital_loss hours_per_week native_country income
@@ -1347,6 +1355,7 @@ new_columns</code></pre></div>
 ##   avg_capital_gain avg_capital_loss
 ##              &lt;dbl&gt;            &lt;dbl&gt;
 ## 1            1078.             87.3</code></pre>
+<p>Here we got a summary of whole dataset. Now lets use <code>group_by()</code> to get summaries by group.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">census_data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(education) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">avg_capital_gain =</span> <span class="kw">mean</span>(capital_gain), <span class="dt">avg_capital_loss =</span> <span class="kw">mean</span>(capital_loss))</code></pre></div>
 <pre><code>## # A tibble: 16 x 3
 ##    education    avg_capital_gain avg_capital_loss

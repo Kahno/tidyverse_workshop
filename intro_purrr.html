@@ -112,7 +112,7 @@ a.sourceLine {
 <ul>
 <li><a href="#purrr">purrr</a><ul>
 <li><a href="#map---the-new-apply">map - the new apply</a><ul>
-<li><a href="#extended-map-functions">extended map functions</a></li>
+<li><a href="#extended-map-functions">extended map() functions</a></li>
 <li><a href="#using-map-for-building-linear-models">Using map for building linear models</a></li>
 <li><a href="#more-map-variations">More map variations</a></li>
 </ul></li>
@@ -132,7 +132,7 @@ a.sourceLine {
     <section id="main-content">
 <div id="purrr" class="section level1">
 <h1>purrr</h1>
-<p>Purrr is a package that is in a way dpylr for lists. It can replace <code>apply()</code> and <code>invoke()</code> functions in R and works well with pipe since it has a defined output.</p>
+<p><strong>Purrr</strong> is a package that is in a way <strong>dpylr</strong> for lists. It can replace <code>apply()</code> and <code>invoke()</code> functions from R and works well with pipe operator since it always has a defined output.</p>
 <div id="map---the-new-apply" class="section level2">
 <h2>map - the new apply</h2>
 <p>First lets load census dataset that we used before and a football datasets.</p>
@@ -211,7 +211,7 @@ a.sourceLine {
 <p>If the <code>map_x()</code> function cannot return desired type it returns an error.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">map_lgl</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, log)</code></pre></div>
 <pre><code>## Error: Can't coerce element 1 from a double to a logical</code></pre>
-<p>Map works with vectors or lists. Since data.frames and tibbles are just lists of columns in R, <code>map()</code> also works with them.</p>
+<p>Map works with vectors or lists. Since <strong>data.frames</strong> and <strong>tibbles</strong> are just lists of columns in R, <code>map()</code> also works with them.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">football <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(HS<span class="op">:</span>AR) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">map_dbl</span>(mean)</code></pre></div>
 <pre><code>##         HS         AS        HST        AST         HF         AF         HC         AC         HY         AY         HR         AR 
 ## 14.1549500 11.2688257  5.3555819  4.1940495 13.5774092 13.9136388  5.9460242  4.5614797  1.8932333  2.1910216  0.1057135  0.1473144</code></pre>
@@ -219,7 +219,7 @@ a.sourceLine {
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">map_dbl</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, log, <span class="dt">base =</span> <span class="dv">2</span>)</code></pre></div>
 <pre><code>## [1] 0.000000 1.000000 1.584963 2.000000</code></pre>
 <div id="extended-map-functions" class="section level3">
-<h3>extended map functions</h3>
+<h3>extended map() functions</h3>
 <p>Function <code>map2()</code> takes two inputs, a function and returns the result as if the function was called with fun(x,y).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">map2</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dv">10</span><span class="op">:</span><span class="dv">1</span>, sum)</code></pre></div>
 <pre><code>## [[1]]
@@ -260,7 +260,7 @@ a.sourceLine {
 <p>Or even shorter.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">map2_dbl</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dv">10</span><span class="op">:</span><span class="dv">1</span>, <span class="op">~</span><span class="st"> </span>.x<span class="op">^</span><span class="dv">2</span> <span class="op">/</span><span class="st"> </span>.y)</code></pre></div>
 <pre><code>##  [1]   0.1000000   0.4444444   1.1250000   2.2857143   4.1666667   7.2000000  12.2500000  21.3333333  40.5000000 100.0000000</code></pre>
-<p>Function <code>map_if()</code> takes a list, checks if list satisfies second condition and then runs the provided function. If the condition fails it returns input or <code>.else</code> function when provided.</p>
+<p>Function <code>map_if()</code> takes a list, checks if list satisfies a condition in the second parameter and then runs the provided function. If the condition fails it returns raw input or <code>.else</code> function when provided.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">map_if</span>(census_data, <span class="op">~</span><span class="st"> </span><span class="kw">length</span>(<span class="kw">unique</span>(.x)) <span class="op">&gt;</span><span class="st"> </span><span class="dv">5</span>, <span class="op">~</span><span class="st"> </span><span class="kw">length</span>(<span class="kw">unique</span>(.x)), <span class="dt">.else =</span> unique)</code></pre></div>
 <pre><code>## $age
 ## [1] 73
@@ -374,7 +374,7 @@ a.sourceLine {
 ##  9 SP1   29/08/10 Sociedad   Villarreal      1     0    10    23     3     5    15    21     7     4     3     3     0     0
 ## 10 SP1   30/08/10 Ath Madrid Sp Gijon        4     0    16    18     7     8    13    22     2     3     3     3     0     0
 ## # ... with 1,890 more rows</code></pre>
-<p>Lets try to combine all the knowlege from today and run a linear model for each division. Function <code>lm()</code> is in <strong>stats</strong> package which is not a part of tidyverse, meaning it does not take data as a first parameter by default.</p>
+<p>Lets try to combine all the knowlege from today and run a linear model for each division. Function <code>lm()</code> is in <strong>stats</strong> package which is not a part of <strong>Tidyverse</strong>, meaning it does not take data as a first parameter by default.</p>
 <p>For example lets try to predict home goals using linear model for the whole dataset. We will only use numeric atributes since we are using a linear model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lm</span>(FTHG <span class="op">~</span><span class="st"> </span>FTAG <span class="op">+</span><span class="st"> </span>HS <span class="op">+</span><span class="st"> </span>AS <span class="op">+</span><span class="st"> </span>HST <span class="op">+</span><span class="st"> </span>AST <span class="op">+</span><span class="st"> </span>HF <span class="op">+</span><span class="st"> </span>AF <span class="op">+</span><span class="st"> </span>HC <span class="op">+</span><span class="st"> </span>AC <span class="op">+</span><span class="st"> </span>HY <span class="op">+</span><span class="st"> </span>AY <span class="op">+</span><span class="st"> </span>HR <span class="op">+</span><span class="st"> </span>AR, football)</code></pre></div>
 <pre><code>## 
@@ -387,7 +387,7 @@ a.sourceLine {
 ##    0.676293     0.071017    -0.015387     0.026426     0.253818    -0.089426     0.005992    -0.003859    -0.060380     0.012022    -0.052997     0.030164  
 ##          HR           AR  
 ##   -0.218088     0.284560</code></pre>
-<p>Now lets look at another example where we will build a linear model for the difference between home team goals and away team goals for each division separately.</p>
+<p>Now lets look at another example where we will build a linear model for the score difference between home team goals and away team goals for each division separately.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">paste_formula &lt;-<span class="st"> </span><span class="cf">function</span>(x){<span class="kw">paste</span>(<span class="st">&quot;diff ~&quot;</span>, <span class="kw">paste0</span>(<span class="kw">names</span>(<span class="kw">select</span>(x, HS<span class="op">:</span>AR)), <span class="dt">collapse =</span> <span class="st">&quot; + &quot;</span>))}
 football <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">select</span>(Div, FTHG<span class="op">:</span>AR) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#keep division and all numeric attributes</span>
@@ -493,23 +493,23 @@ football <span class="op">%&gt;%</span><span class="st"> </span>
 <p>Function <code>pmap()</code> is a generalization of <code>map()</code>. It takes lists of parameters and then passes first value of each list to the desired function, then second value and so on.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pmap</span>(<span class="kw">list</span>(<span class="kw">rep</span>(<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">4</span>), <span class="dv">2</span>), <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">5</span>, <span class="dt">length.out =</span> <span class="dv">4</span>)), rnorm)</code></pre></div>
 <pre><code>## [[1]]
-## [1] -0.9019482  0.5067338
+## [1] 1.166403 1.554976
 ## 
 ## [[2]]
-## [1] 6.348616 1.503446 4.652207 3.033059
+## [1] 2.925179 1.094183 1.734023 2.358525
 ## 
 ## [[3]]
-## [1]  3.256316 -6.628238
+## [1] 7.993652 6.778403
 ## 
 ## [[4]]
-## [1] 7.5820692 0.9769414 2.1470775 1.3316582</code></pre>
+## [1] -0.08018693  3.47429010 -4.78727122  5.01275927</code></pre>
 <p>Function <code>invoke_map()</code> can be used to call different functions with different parameters. Can be used to run different models with different datasets using pipe.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">invoke_map</span>(<span class="kw">list</span>(runif, rnorm, sqrt, log), <span class="kw">list</span>(<span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">2</span>,<span class="dv">1</span>), <span class="kw">list</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>), <span class="kw">list</span>(<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">8</span>), <span class="dv">2</span>)))</code></pre></div>
 <pre><code>## [[1]]
-## [1] 0.965021309 0.771803379 0.115787986 0.318696769 0.003553721
+## [1] 0.7603633 0.4471954 0.6741830 0.1880300 0.6808987
 ## 
 ## [[2]]
-## [1] 1.8275480 1.8550785 0.4095089 2.7348696 3.1507811
+## [1] 1.633961 1.894826 3.660244 3.555078 2.443205
 ## 
 ## [[3]]
 ##  [1] 1.000000 1.414214 1.732051 2.000000 2.236068 2.449490 2.645751 2.828427 3.000000 3.162278
@@ -520,75 +520,87 @@ football <span class="op">%&gt;%</span><span class="st"> </span>
 </div>
 <div id="convenience-functions" class="section level2">
 <h2>Convenience functions</h2>
-<p>Purrr also includes some convenience functions for working with list such as <code>flatten()</code> and <code>transpose()</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">temp_list &lt;-<span class="st"> </span><span class="kw">pmap</span>(<span class="kw">list</span>(<span class="kw">rep</span>(<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">4</span>), <span class="dv">2</span>), <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">5</span>, <span class="dt">length.out =</span> <span class="dv">4</span>)), rnorm)</code></pre></div>
+<p><strong>Purrr</strong> also includes some convenience functions for working with list such as <code>flatten()</code> and <code>transpose()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">temp_list &lt;-<span class="st"> </span><span class="kw">pmap</span>(<span class="kw">list</span>(<span class="kw">rep</span>(<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">4</span>), <span class="dv">2</span>), <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">5</span>, <span class="dt">length.out =</span> <span class="dv">4</span>)), rnorm)
+temp_list</code></pre></div>
+<pre><code>## [[1]]
+## [1] 0.5613333 2.2098685
+## 
+## [[2]]
+## [1] -1.320161  1.862572  2.475385  3.733691
+## 
+## [[3]]
+## [1]  1.615104 11.721827
+## 
+## [[4]]
+## [1] -0.4396598 -1.1803812 15.8389321  6.8057702</code></pre>
 <p>Function <code>flatten()</code> flattens the list making it longer but each list having one value.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">flatten</span>(temp_list)</code></pre></div>
 <pre><code>## [[1]]
-## [1] 0.157955
+## [1] 0.5613333
 ## 
 ## [[2]]
-## [1] 0.1387215
+## [1] 2.209868
 ## 
 ## [[3]]
-## [1] 0.7445178
+## [1] -1.320161
 ## 
 ## [[4]]
-## [1] 3.158721
+## [1] 1.862572
 ## 
 ## [[5]]
-## [1] -1.364588
+## [1] 2.475385
 ## 
 ## [[6]]
-## [1] -0.5960721
+## [1] 3.733691
 ## 
 ## [[7]]
-## [1] -0.7200135
+## [1] 1.615104
 ## 
 ## [[8]]
-## [1] 5.080334
+## [1] 11.72183
 ## 
 ## [[9]]
-## [1] 2.929744
+## [1] -0.4396598
 ## 
 ## [[10]]
-## [1] 1.705965
+## [1] -1.180381
 ## 
 ## [[11]]
-## [1] 13.64078
+## [1] 15.83893
 ## 
 ## [[12]]
-## [1] 10.7953</code></pre>
-<p>Function <code>transose()</code> tries to transpose a list similar to transposing matrix.</p>
+## [1] 6.80577</code></pre>
+<p>Function <code>transpose()</code> tries to transpose a list similar to transposing matrix.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">transpose</span>(temp_list)</code></pre></div>
 <pre><code>## Warning: Element 2 must be length 2, not 4</code></pre>
 <pre><code>## Warning: Element 4 must be length 2, not 4</code></pre>
 <pre><code>## [[1]]
 ## [[1]][[1]]
-## [1] 0.157955
+## [1] 0.5613333
 ## 
 ## [[1]][[2]]
-## [1] 0.7445178
+## [1] -1.320161
 ## 
 ## [[1]][[3]]
-## [1] -0.7200135
+## [1] 1.615104
 ## 
 ## [[1]][[4]]
-## [1] 2.929744
+## [1] -0.4396598
 ## 
 ## 
 ## [[2]]
 ## [[2]][[1]]
-## [1] 0.1387215
+## [1] 2.209868
 ## 
 ## [[2]][[2]]
-## [1] 3.158721
+## [1] 1.862572
 ## 
 ## [[2]][[3]]
-## [1] 5.080334
+## [1] 11.72183
 ## 
 ## [[2]][[4]]
-## [1] 1.705965</code></pre>
+## [1] -1.180381</code></pre>
 <p><code>transpose()</code> makes the new list the lenght of the first vector in original list.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">temp_list &lt;-<span class="st"> </span><span class="kw">pmap</span>(<span class="kw">list</span>(<span class="kw">rep</span>(<span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">2</span>), <span class="dv">2</span>), <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">5</span>, <span class="dt">length.out =</span> <span class="dv">4</span>)), rnorm) <span class="co">#Swaped 2 and 4 in first argument</span>
 <span class="kw">transpose</span>(temp_list)</code></pre></div>
@@ -596,41 +608,41 @@ football <span class="op">%&gt;%</span><span class="st"> </span>
 <pre><code>## Warning: Element 4 must be length 4, not 2</code></pre>
 <pre><code>## [[1]]
 ## [[1]][[1]]
-## [1] 1.443659
+## [1] 0.5540599
 ## 
 ## [[1]][[2]]
-## [1] 1.87347
+## [1] -1.125272
 ## 
 ## [[1]][[3]]
-## [1] 1.855283
+## [1] 5.556022
 ## 
 ## [[1]][[4]]
-## [1] 0.5926222
+## [1] -1.380187
 ## 
 ## 
 ## [[2]]
 ## [[2]][[1]]
-## [1] -0.2552907
+## [1] 0.06558349
 ## 
 ## [[2]][[2]]
-## [1] 5.181322
+## [1] 1.749332
 ## 
 ## [[2]][[3]]
-## [1] 1.311919
+## [1] 4.664875
 ## 
 ## [[2]][[4]]
-## [1] 2.974055
+## [1] 5.39459
 ## 
 ## 
 ## [[3]]
 ## [[3]][[1]]
-## [1] 1.017669
+## [1] 1.479502
 ## 
 ## [[3]][[2]]
 ## NULL
 ## 
 ## [[3]][[3]]
-## [1] 4.439129
+## [1] -1.364517
 ## 
 ## [[3]][[4]]
 ## NULL
@@ -638,13 +650,13 @@ football <span class="op">%&gt;%</span><span class="st"> </span>
 ## 
 ## [[4]]
 ## [[4]][[1]]
-## [1] -1.398631
+## [1] 1.236981
 ## 
 ## [[4]][[2]]
 ## NULL
 ## 
 ## [[4]][[3]]
-## [1] 9.444636
+## [1] 5.373286
 ## 
 ## [[4]][[4]]
 ## NULL</code></pre>
@@ -810,7 +822,7 @@ football <span class="op">%&gt;%</span><span class="st"> </span>
 <h1>Exercises</h1>
 <div id="exercise-1" class="section level2">
 <h2>Exercise 1</h2>
-<p>A dataset <code>who</code> in R has turbecolusis data from World Health Organization. You can get a short description of the table by writing <code>?who</code> in console.</p>
+<p>A dataset <code>who</code> in R has turbecolusis data from World Health Organization. You can get a short description of the data by writing <code>?who</code> in console.</p>
 <p>The data is in wide format. Transform it into long format so that you obtain a table with attributes: country, iso2, iso3, year, group, cases.</p>
 </div>
 <div id="exercise-2" class="section level2">
