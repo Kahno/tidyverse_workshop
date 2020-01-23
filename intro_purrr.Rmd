@@ -1,0 +1,258 @@
+---
+title: "Introduction to tidyverse - purrr"
+date: "January 2020"
+author: "Matej Piculin"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    toc: yes
+    highlight: github
+---
+  
+#purrr
+  
+  Purrr is a package that is in a way dpylr for lists. It can replace `apply()` and `invoke()` functions in R and works well with pipe since it has a defined output.
+
+##map - the new apply
+
+First lets load census dataset that we used before and a football datasets.
+
+```{r, eval=TRUE}
+census_data <- read_csv("./data/census.csv", na = "?")
+football <- read_csv("./data/football.csv")
+football
+```
+
+`map()` is similar to `lapply()`. It applies a function to each value in a vector or in a list and always returns a list.
+
+```{r, eval=TRUE}
+map(1:4, log)
+```
+
+We can use similar functions like `map_dbl()` where there result is a vector of type double.
+
+```{r, eval=TRUE}
+map_dbl(1:4, log)
+```
+
+If the `map_x()` function cannot return desired type it returns an error.
+```{r, eval=TRUE, error=TRUE}
+map_lgl(1:4, log)
+```
+
+Map works with vectors or lists. Since data.frames and tibbles are just lists of columns in R, `map()` also works with them.
+
+```{r, eval=TRUE}
+football %>% select(HS:AR) %>% map_dbl(mean)
+```
+
+We can easily apply additional parameters to the called function.
+
+```{r, eval=TRUE}
+map_dbl(1:4, log, base = 2)
+```
+
+### extended map functions
+
+Function `map2()` takes two inputs, a function and returns the result as if the function was called with fun(x,y).
+
+```{r, eval=TRUE}
+map2(1:10, 10:1, sum)
+```
+
+Again we can add a postfix to the function to select the desired output.
+
+```{r, eval=TRUE}
+map2_dbl(1:10, 10:1, sum)
+```
+
+Of course we can provide our own function which can be defined on-the-fly.
+
+```{r, eval=TRUE}
+map2_dbl(1:10, 10:1, function(x,y){x^2/y})
+```
+
+Or even shorter.
+
+```{r, eval=TRUE}
+map2_dbl(1:10, 10:1, ~ .x^2 / .y)
+```
+
+Function `map_if()` takes a list, checks if list satisfies second condition and then runs the provided function. If the condition fails it returns input or `.else` function when provided.
+
+
+```{r, eval=TRUE}
+map_if(census_data, ~ length(unique(.x)) > 5, ~ length(unique(.x)), .else = unique)
+```
+
+### Using map for building linear models
+
+Function `split()` is a base R function that splits the data using provided factor. For example lets divide the football data by divisisions.
+
+```{r, eval=TRUE}
+split(football, football$Div) 
+```
+
+Lets try to combine all the knowlege from today and run a linear model for each division. Function `lm()` is in **stats** package which is not a part of tidyverse, meaning it does not take data as a first parameter by default.
+
+For example lets try to predict home goals using linear model for the whole dataset. We will only use numeric atributes since we are using a linear model.
+
+```{r, eval=TRUE}
+lm(FTHG ~ FTAG + HS + AS + HST + AST + HF + AF + HC + AC + HY + AY + HR + AR, football)
+```
+
+Now lets look at another example where we will build a linear model for the difference between home team goals and away team goals for each division separately.
+
+```{r, eval=TRUE}
+paste_formula <- function(x){paste("diff ~", paste0(names(select(x, HS:AR)), collapse = " + "))}
+football %>% 
+  select(Div, FTHG:AR) %>% #keep division and all numeric attributes
+  mutate(diff = FTHG - FTAG) %>% #construct a new attribute with difference
+  select(-FTHG, -FTAG) %>% #remove used attributes
+  split(., .$Div) %>% #create a list of four datasets, one for each division
+  map( ~ lm(paste_formula(.), data = .)) #run linear model on each dataset
+```
+
+Using `map2()` we could also use different equation for each dataset.
+
+```{r, eval=TRUE}
+paste_formula <- function(x){paste("diff ~", paste0(names(select(x, HS:AR)), collapse = " + "))}
+football %>% 
+  select(Div, FTHG:AR) %>% 
+  mutate(diff = FTHG - FTAG) %>% 
+  select(-FTHG, -FTAG) %>% 
+  split(., .$Div) %>% 
+  map2(c("diff ~ HS + AS + HST", "diff ~ AST + HF + AF", "diff ~ HC + AC + HY", "diff ~ AY + HR + AR"), ~ lm(.y, data = .x))
+```
+
+### More map variations
+
+Function `pmap()` is a generalization of `map()`. It takes lists of parameters and then passes first value of each list to the desired function, then second value and so on.
+
+```{r, eval=TRUE}
+pmap(list(rep(c(2,4), 2), 1:4, seq(1,5, length.out = 4)), rnorm)
+```
+
+Function `invoke_map()` can be used to call different functions with different parameters. Can be used to run different models with different datasets using pipe.
+
+```{r, eval=TRUE}
+invoke_map(list(runif, rnorm, sqrt, log), list(c(5,0,1), c(5,2,1), list(1:10), list(c(1,2,4,8), 2)))
+```
+
+
+## Convenience functions
+
+Purrr also includes some convenience functions for working with list such as `flatten()` and `transpose()`.
+```{r, eval=TRUE}
+temp_list <- pmap(list(rep(c(2,4), 2), 1:4, seq(1,5, length.out = 4)), rnorm)
+```
+
+Function `flatten()` flattens the list making it longer but each list having one value.
+
+```{r, eval=TRUE}
+flatten(temp_list)
+```
+
+Function `transose()` tries to transpose a list similar to transposing matrix.
+
+```{r, eval=TRUE}
+transpose(temp_list)
+```
+
+`transpose()` makes the new list the lenght of the first vector in original list.
+
+```{r, eval=TRUE}
+temp_list <- pmap(list(rep(c(4,2), 2), 1:4, seq(1,5, length.out = 4)), rnorm) #Swaped 2 and 4 in first argument
+transpose(temp_list)
+```
+
+More convenience functions with obvious names.
+
+```{r, eval=TRUE}
+temp_list <- list(start = letters[1:4], mid = letters[10:14], end = letters[22:26])
+temp_list
+```
+
+```{r, eval=TRUE}
+append(temp_list, list(digits = c(0:9)))
+```
+
+```{r, eval=TRUE}
+prepend(temp_list, list(digits = c(0:9)))
+```
+
+```{r, eval=TRUE}
+splice(temp_list[1], list(digits = c(0:9)), temp_list[c(2,3)])
+```
+
+
+##Summorizing lists
+
+And even more convenience functions for working with lists.
+
+```{r, eval=TRUE}
+every(football, is.numeric) #Is every list numeric?
+some(football, is.numeric) #Are some lists numeric?
+has_element(football, 3) #Is one list just a number 3?
+has_element(football, football$Div) #Does this list include attribute Div?
+```
+
+Function `detect_index()` is similar to `which()` but used for lists.
+
+```{r, eval=TRUE}
+detect(football, is.numeric) #Return the first list with numeric values.
+detect_index(football, is.numeric) #Return the index of the first list with numeric values.
+```
+
+How deep can we go? Function `vec_depth()` returns the max possible indexing.
+
+```{r, eval=TRUE}
+temp_list <- list(start = letters[1:4], mid = letters[10:14], end = letters[22:26])
+vec_depth(temp_list)
+temp_list$end <- list(a = letters[22:23], b = letters[23:26])
+vec_depth(temp_list)
+```
+
+
+#Nesting
+
+Tidy table implies that each cell should have one value. But we never said it has to be atomic value. It is possible to have cells with lists or other tibbles. 
+
+Function `nest()` is used in combination with `group_by()` to nest the groups in one table.
+
+```{r, eval=TRUE}
+football %>% 
+  group_by(Div) %>%
+  nest()
+```
+
+Lets see how can we now run `lm()` for each division using `nest()`. This example uses only tidyverse functions to construct pipline.
+
+```{r, eval=TRUE}
+run_lm <- function(x){lm(diff ~ ., x)}
+football %>% 
+  select(Div, FTHG:AR) %>%
+  mutate(diff = FTHG - FTAG) %>% 
+  select(-FTHG, -FTAG) %>% 
+  group_by(Div) %>% 
+  nest() %>% 
+  mutate(model = map(data, run_lm)) %>% #save models to tibble
+  .$model #print models
+```
+
+
+#Exercises
+
+## Exercise 1
+
+A dataset `who` in R has turbecolusis data from World Health Organization. You can get a short description of the table by writing `?who` in console.
+
+The data is in wide format. Transform it into long format so that you obtain a table with attributes: country, iso2, iso3, year, group, cases.
+
+## Exercise 2
+
+File cars.csv includes a dataset from UCI Machine Learning repository (http://mlr.cs.umass.edu/ml/datasets/Automobile).
+
+a) Read the data into a tibble. Take care of missing values.
+b) Make a linear model that predicts the price based on all numeric attributes.
+c) Create a pipeline that constructs a linear model for price for each type of body_style.
