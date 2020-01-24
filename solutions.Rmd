@@ -1,0 +1,110 @@
+---
+title: "Introduction to tidyverse - solutions to exercises"
+date: "January 2020"
+author: "Matej Piculin"
+output:
+  prettydoc::html_pretty:
+  theme: architect
+toc: yes
+highlight: github
+---
+  
+  # Solutions
+  
+  ## Exercise 1
+  
+  A dataset `who` in R has turbecolusis data from World Health Organization. You can get a short description of the data by writing `?who` in console.
+
+The data is in wide format. Transform it into long format so that you obtain a table with attributes: country, iso2, iso3, year, group, cases.
+
+### Solution 1
+
+Solution by providing attribute names to gather.
+
+```{r, eval=TRUE}
+who %>%
+  gather(key = group, value = cases, new_sp_m014:newrel_f65)
+```
+
+Solution by provinding names of attributes to ignore.
+
+```{r, eval=TRUE}
+who %>%
+  gather(group, cases, -c(country, year, iso2, iso3))
+```
+
+Removing NA cases to shorten the table.
+
+```{r, eval=TRUE}
+who %>%
+  gather(group, cases, -c(country, year, iso2, iso3)) %>%
+  drop_na()
+```
+
+Or raplacing NA values with 0.
+
+```{r, eval=TRUE}
+who %>%
+  gather(group, cases, -c(country, year, iso2, iso3)) %>%
+  replace_na(list(cases = 0))
+```
+
+## Exercise 2
+
+File cars.csv includes a dataset from UCI Machine Learning repository (http://mlr.cs.umass.edu/ml/datasets/Automobile).
+
+a) Read the data into a tibble. Take care of missing values.
+b) Make a linear model that predicts the price based on all numeric attributes.
+c) Create a pipeline that constructs a linear model for price for each type of body_style.
+
+### Solution 2
+
+a) Read the data into a tibble. Take care of missing values.
+
+```{r, eval=TRUE}
+cars <- read_csv(".\\data\\cars.csv", na = "?")
+```
+
+b) Make a linear model that predicts the price based on all numeric attributes.
+
+
+A solution where we extract the names of numeric attributes 'by hand' and feed them to select function.
+
+```{r, eval=TRUE}
+run_lm <- function(x){lm(price ~ ., x)}
+cars %>% 
+  select(names(.)[map_lgl(., is.numeric)]) %>% 
+  run_lm()
+```
+
+A simple solution with `select_if()` used for such cases.
+
+```{r, eval=TRUE}
+run_lm <- function(x){lm(price ~ ., x)}
+cars %>% 
+  select_if(is.numeric) %>% 
+  run_lm()
+```
+
+c) Create a pipeline that constructs a linear model for price for each type of body-style.
+
+```{r, eval=TRUE}
+run_lm <- function(x){lm(price ~ ., x)}
+cars %>% 
+  select("body-style", names(.)[map_lgl(., is.numeric)]) %>% 
+  group_by(`body-style`) %>%
+  nest() %>%
+  mutate(lm_models = map(data, run_lm)) %>%
+  .$lm_models
+```
+
+Or without complex `select()`.
+
+```{r, eval=TRUE}
+run_lm <- function(x){x %>% select_if(is.numeric) %>% lm(price ~ ., .)}
+cars %>% 
+  group_by(`body-style`) %>%
+  nest() %>%
+  mutate(lm_models = map(data, run_lm)) %>%
+  .$lm_models
+```
